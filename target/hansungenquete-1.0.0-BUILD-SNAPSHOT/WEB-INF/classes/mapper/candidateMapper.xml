@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="mapper.candidateMapper">
+
+
+
+	<insert id="insertCandidate" parameterType="com.codingquokka.hansungvote.domain.CandidateVO">
+		insert into candidate (candidateName, electionName, image)
+		values (#{candidateName}, #{electionName}, #{image});
+	</insert>
+
+	<select id="selectCandidate" parameterType="String" resultType="com.codingquokka.hansungvote.domain.CandidateVO">
+		select *
+		from candidate
+		where electionName=#{electionName};
+	</select>
+
+	<select id="selectSpecipicCandidate" parameterType="String" resultType="com.codingquokka.hansungvote.domain.CandidateVO">
+		select *
+		from candidate
+		where candidateName= #{candidateName};
+	</select>
+
+	<delete id="deleteCandidate" parameterType="String">
+		delete
+		from candidate
+		where electionName=#{electionName};
+	</delete>
+
+</mapper>

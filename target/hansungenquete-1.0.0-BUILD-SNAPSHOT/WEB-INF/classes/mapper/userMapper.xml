@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="mapper.userMapper">
+	<!-- 로그인  -->
+	<select id="login" parameterType="com.codingquokka.hansungvote.domain.UserVO" resultType="com.codingquokka.hansungvote.domain.UserVO">
+		select *
+		from user
+		where stuId=#{stuId} and phoneNumber=#{phoneNumber}
+	</select>
+
+	<select id="findDepartmentOfUser" parameterType="String" resultType="com.codingquokka.hansungvote.domain.UserVO">
+		select *
+		from user
+		where stuId=#{stuId}
+	</select>
+
+	<select id="certificate" parameterType="com.codingquokka.hansungvote.domain.UserVO" resultType="com.codingquokka.hansungvote.domain.UserVO">
+		select *
+		from user
+		where name=#{name}
+	</select>
+	
+	 <!-- 총유권자수 계산  -->
+	<select id = "totalvoters" parameterType="String" resultType = "int">
+		select COUNT(*)
+		from user
+		where (department like CONCAT('%',#{department},'%') and stuId !='manager') or department = substring(#{department} from 1 for 3);
+	</select>
+	<select id = "totalvotersDelegate" parameterType="String" resultType = "int">
+		select COUNT(*)
+		from user
+		where delegate=1;
+	</select>
+
+	<select id="allUserWhoHaveRight" parameterType="com.codingquokka.hansungvote.domain.ElectionVO" resultType="map">
+		alter view temp1 as (
+		select *
+		from user
+		where (department like CONCAT('%',#{department},'%') and stuId !='manager') or department = substring(#{department} from 1 for 3)
+		);
+		alter view temp2 as (
+		select stuId, candidateName
+		from electionvoted
+		where electionName=#{electionName}
+		);
+		select temp1.*, temp2.candidateName as candidateName
+		from temp1 left outer join temp2 on temp1.stuId = temp2.stuId;
+	</select>
+
+	<insert id = "insertUser" parameterType="com.codingquokka.hansungvote.domain.ElectionvotedVO">
+		insert into user(stuId, name, phoneNumber, department, delegate, agree)
+		values (#{stuId}, #{name}, #{phoneNumber}, #{department}, #{delegate}, 0);
+	</insert>
+
+
+	<select id="voteCan" parameterType="String" resultType="String">
+		alter view temp3 as(
+		select department, electionName
+		from election
+		where department like CONCAT('%',#{department},'%')
+		or department = substring(#{department} from 1 for 1)
+		or department = substring(#{department} from 1 for 3)
+		or department = ""
+		);
+		alter view temp4 as(
+		select *
+		from user
+		where department like CONCAT('%',#{department},'%')
+		and stuId=#{stuId} and name=#{name}
+		);
+		select temp3.electionName
+		from temp3 left outer join temp4 on temp3.department = temp4.department
+	</select>
+
+	<update id="agreeCount" parameterType="com.codingquokka.hansungvote.domain.UserVO">
+		update user
+		set agree = 1
+		where stuId=#{stuId}
+	</update>
+
+	<delete id="userDataDelete" >
+		delete
+		from user
+		where stuId not in("manager");
+	</delete>
+
+
+
+</mapper>

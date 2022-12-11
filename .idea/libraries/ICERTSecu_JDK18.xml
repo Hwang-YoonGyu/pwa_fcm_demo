@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ICERTSecu_JDK18">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/ICERTSecu_JDK18.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
